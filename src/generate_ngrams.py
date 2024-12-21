@@ -1,24 +1,33 @@
 #!/usr/bin/env python3
 
+from argparse import ArgumentParser
 from bs4 import BeautifulSoup
 import json
-from nltk.util import bigrams, trigrams
+from ngramtools import NgramGenerator
 import os
 from pathlib import Path
 from preprocessing import tokenize
+import sys
 from tqdm import tqdm
-from util import NgramCounter, alpha3convert, serialize
+from util import alpha3convert
 
 
-def main():
+def main(args):
     data_path = Path("data/yle2024")
     ngrams_path = Path("ngrams")
 
-    ngram_counter = NgramCounter()
-    
-    for file in tqdm(data_path.glob("*.html")):
-        with open(file) as fp:
-            soup = BeautifulSoup(fp, features="lxml")
+    articles = list(data_path.glob("*.html"))
+
+    checkpoint = args.checkpoint
+    if args.checkpoint:
+        articles = articles[(checkpoint * 10000):]
+        generator = NgramGenerator.from_disk(ngrams_path)
+    else:
+        generator = NgramGenerator()
+
+    for i, a in enumerate(tqdm(articles)):
+        with open(a) as file:
+            soup = BeautifulSoup(file, features="lxml")
 
         texts = []
         for p in soup.section.find_all("p"):
@@ -32,19 +41,16 @@ def main():
         tokens = tokenize(texts, lang)
         lang_a3 = alpha3convert(lang)
 
-        ngram_counter.update(tokens, lang_a3, "word_fd")
-        ngram_counter.update(bigrams(tokens), lang_a3, "bigram_fd")
-        ngram_counter.update(trigrams(tokens), lang_a3, "trigram_fd")
+        generator.update(tokens, lang_a3)
 
-    for l in ngram_counter.get_langs():
-        counters = ngram_counter.get_counters(l)
-
-        for k, v in counters.items():
-            output_dir = ngrams_path / l
-            os.makedirs(output_dir, exist_ok=True)
-            with open(output_dir / f"{k}.json", "w") as fp:
-                json.dump(serialize_counter(v), fp, ensure_ascii=False)
+        if i + 1 % 10000 == 0 or i == len(articles):
+            generator.to_disk(ngrams_path)
+            print(f"Checkpoint 1: {i + 1} articles processed.")
 
 
 if __name__ == "__main__":
-    main()
+    parser = ArgumentParser()
+    parser.add_argument("-c", "--checkpoint", type=int)
+    args = parser.parse_args()
+
+    main(args)

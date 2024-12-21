@@ -22,9 +22,9 @@ class UralicToken:
         self.text = text
 
 
-def tokenize(texts, lang):
+def tokenize(texts, language):
     try:
-        nlp = get_lang_class(lang)()
+        nlp = get_lang_class(language)()
     except:
         nlp = Uralic()
 
