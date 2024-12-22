@@ -7,7 +7,7 @@ import os
 _tg_fd_names = ["word_fd", "bigram_fd", "wildcard_fd", "trigram_fd"]
 
 
-class NgramGenerator:
+class NgramContainer:
 
     def __init__(self, finders=None):
         if finders is None:

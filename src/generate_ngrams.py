@@ -1,13 +1,10 @@
 #!/usr/bin/env python3
 
-from argparse import ArgumentParser
 from bs4 import BeautifulSoup
 import json
-from ngramtools import NgramGenerator
-import os
+from ngramtools import NgramContainer
 from pathlib import Path
 from preprocessing import tokenize
-import sys
 from tqdm import tqdm
 from util import alpha3convert
 
@@ -16,17 +13,10 @@ def main(args):
     data_path = Path("data/yle2024")
     ngrams_path = Path("ngrams")
 
-    articles = list(data_path.glob("*.html"))
+    container = NgramContainer()
 
-    checkpoint = args.checkpoint
-    if args.checkpoint:
-        articles = articles[(checkpoint * 10000):]
-        generator = NgramGenerator.from_disk(ngrams_path)
-    else:
-        generator = NgramGenerator()
-
-    for i, a in enumerate(tqdm(articles)):
-        with open(a) as file:
+    for file_name in tqdm(data_path.glob("*.html")):
+        with open(file_name) as file:
             soup = BeautifulSoup(file, features="lxml")
 
         texts = []
@@ -41,16 +31,10 @@ def main(args):
         tokens = tokenize(texts, lang)
         lang_a3 = alpha3convert(lang)
 
-        generator.update(tokens, lang_a3)
+        container.update(tokens, lang_a3)
 
-        if i + 1 % 10000 == 0 or i == len(articles):
-            generator.to_disk(ngrams_path)
-            print(f"Checkpoint 1: {i + 1} articles processed.")
+    container.to_disk(ngrams_path)
 
 
 if __name__ == "__main__":
-    parser = ArgumentParser()
-    parser.add_argument("-c", "--checkpoint", type=int)
-    args = parser.parse_args()
-
-    main(args)
+    main()
