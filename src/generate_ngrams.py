@@ -19,9 +19,9 @@ def main():
         with open(file_name) as file:
             soup = BeautifulSoup(file, features="lxml")
 
-        texts = []
-        for p in soup.section.find_all("p"):
-            if p["class"][-1] == "yle__article__paragraph":
+        texts = [soup.h1.get_text()]
+        for p in soup.find_all("p"):
+            if p["class"][-1] == "yle__article__paragraph" and not p.em:
                 texts.append(p.get_text(" ", strip=True))
 
         script = soup.find_all("script")[-1]
