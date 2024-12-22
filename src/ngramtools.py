@@ -36,7 +36,8 @@ class NgramContainer:
             for name, fd_seq in vars(finder_seq).items():
                 if name != "N":
                     fd_all = getattr(finder_all, name)
-                    setattr(finder_all, name, fd_all.update(fd_seq))
+                    fd_all.update(fd_seq)
+                    setattr(finder_all, name, fd_all)
             finder_all.N = finder_all.word_fd.N()
 
     def serialize(self):
