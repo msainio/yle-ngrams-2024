@@ -20,9 +20,12 @@ def main():
             soup = BeautifulSoup(file, features="lxml")
 
         texts = []
+
         microdata = json.loads(soup.find(id="json-ld-microdata").string)
-        texts.append(microdata["@graph"][0]["headline"])
-        texts.append(microdata["@graph"][0]["description"])
+        graph_0 = microdata["@graph"][0]
+        texts.append(graph_0["headline"])
+        if "description" in graph_0.keys():
+            texts.append(graph_0["description"])
 
         for p in soup.section.find_all("p"):
             if p["class"][-1] == "yle__article__paragraph" and not p.em:
