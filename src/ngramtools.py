@@ -1,3 +1,4 @@
+import inspect
 from pathlib import Path
 import json
 from nltk.collocations import TrigramCollocationFinder
@@ -59,36 +60,45 @@ class NgramContainer:
         return self.finders
 
 
+def serialize_fd(fd):
+    return [[(list(e) if isinstance(e, tuple) else e), c]
+            for e, c in fd.items()]
+
+
 def serialize_finder(finder):
     ser_finder = {}
+
     for name, fd in vars(finder).items():
-        if name == "N":
-            continue
         if name == "ngram_fd":
             name = "trigram_fd"
-
-        ser_fd = [[(list(e) if isinstance(e, tuple) else e), c]
-                  for e, c in fd.items()]
-        ser_finder[name] = ser_fd
+        if name in _fd_names:
+            ser_finder[name] = serialize_fd(fd)
 
     return ser_finder
 
 
-def deserialize_finder(ser_finder):
+def deserialize_fd(ser_fd):
+    elements = [((tuple(e) if isinstance(e, list) else e), c)
+                for e, c in ser_fd]
+    return FreqDist(elements)
+
+
+def deserialize_finder(ser_finder, finder_class):
+    finder_args = inspect.getfullargspec(finder_class.__init__).args
+    finder_fd_names = set(_fd_names) & set(finder_args)
+
     fdists = {}
-
     for name, ser_fd in ser_finder.items():
-        elements = [((tuple(e) if isinstance(e, list) else e), c)
-                    for e, c in ser_fd]
-        fdists[name] = FreqDist(elements)
+        if name in finder_fd_names:
+            fdists[name] = deserialize_fd(ser_fd)
 
-    return TrigramCollocationFinder(**fdists)
+    return finder_class(**fdists)
 
 
-def finder_from_disk(path):
+def finder_from_disk(path, finder_class):
     path_obj = Path(path)
 
-    ser_fdists = {}
+    ser_finder = {}
     for name in _fd_names:
         file_path = path_obj / f"{name}.json"
 
@@ -96,6 +106,6 @@ def finder_from_disk(path):
             ser_fd = json.load(file)
 
             for k, v in ser_fd.items():
-                ser_fdists[k] = v
+                ser_finder[k] = v
 
-    return deserialize_finder(ser_fdists)
+    return deserialize_finder(ser_finder, finder_class)
