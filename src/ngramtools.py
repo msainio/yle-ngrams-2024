@@ -12,6 +12,7 @@ class NgramContainer:
     def __init__(self, finders=None):
         if not finders:
             finders = {}
+
         self.finders = finders
 
     @classmethod
@@ -26,13 +27,13 @@ class NgramContainer:
 
         return cls(finders)
 
-    def update(self, words, language):
+    def update(self, words, lang):
         finder_seq = TrigramCollocationFinder.from_words(words)
 
-        if language not in self.finders.keys():
-            self.finders[language] = finder_seq
+        if lang not in self.finders.keys():
+            self.finders[lang] = finder_seq
         else:
-            finder_all = self.finders[language]
+            finder_all = self.finders[lang]
 
             for name, fd_seq in vars(finder_seq).items():
                 if name != "N":
@@ -66,7 +67,7 @@ def serialize_finder(finder):
         if name == "ngram_fd":
             name = "trigram_fd"
 
-        ser_fd = [[(list(e) if type(e) is tuple else e), c]
+        ser_fd = [[(list(e) if isinstance(e, tuple) else e), c]
                   for e, c in fd.items()]
         ser_finder[name] = ser_fd
 
@@ -77,8 +78,9 @@ def deserialize_finder(ser_finder):
     fdists = {}
 
     for name, ser_fd in ser_finder.items():
-        fdists[name] = FreqDist([((tuple(e) if type(e) is list else e), c)
-                                for e, c in ser_fd])
+        elements = [((tuple(e) if isinstance(e, list) else e), c)
+                    for e, c in ser_fd]
+        fdists[name] = FreqDist(elements)
 
     return TrigramCollocationFinder(**fdists)
 
