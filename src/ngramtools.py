@@ -4,21 +4,21 @@ from nltk.collocations import TrigramCollocationFinder
 from nltk.probability import FreqDist
 import os
 
-_tg_fd_names = ["word_fd", "bigram_fd", "wildcard_fd", "trigram_fd"]
+_fd_names = ["word_fd", "bigram_fd", "wildcard_fd", "trigram_fd"]
 
 
 class NgramContainer:
 
     def __init__(self, finders=None):
-        if finders is None:
+        if not finders:
             finders = {}
         self.finders = finders
 
     @classmethod
     def from_disk(cls, path):
         path_obj = Path(path)
-        finders = {}
 
+        finders = {}
         for lang_dir in path_obj.iterdir():
             if lang_dir.is_dir():
                 lang = str(lang_dir)
@@ -33,11 +33,13 @@ class NgramContainer:
             self.finders[language] = finder_seq
         else:
             finder_all = self.finders[language]
+
             for name, fd_seq in vars(finder_seq).items():
                 if name != "N":
                     fd_all = getattr(finder_all, name)
                     fd_all.update(fd_seq)
                     setattr(finder_all, name, fd_all)
+
             finder_all.N = finder_all.word_fd.N()
 
     def serialize(self):
@@ -73,20 +75,24 @@ def serialize_finder(finder):
 
 def deserialize_finder(ser_finder):
     fdists = {}
+
     for name, ser_fd in ser_finder.items():
         fdists[name] = FreqDist([((tuple(e) if type(e) is list else e), c)
                                 for e, c in ser_fd])
+
     return TrigramCollocationFinder(**fdists)
 
 
 def finder_from_disk(path):
     path_obj = Path(path)
-    ser_fdists = {}
 
-    for name in _tg_fd_names:
+    ser_fdists = {}
+    for name in _fd_names:
         file_path = path_obj / f"{name}.json"
+
         with open(file_path) as file:
             ser_fd = json.load(file)
+
             for k, v in ser_fd.items():
                 ser_fdists[k] = v
 

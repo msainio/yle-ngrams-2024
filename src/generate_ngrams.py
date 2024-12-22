@@ -21,18 +21,17 @@ def main():
 
         texts = []
 
-        microdata = json.loads(soup.find(id="json-ld-microdata").string)
-        graph_0 = microdata["@graph"][0]
-        texts.append(graph_0["headline"])
-        if "description" in graph_0.keys():
-            texts.append(graph_0["description"])
+        metadata = json.loads(soup.find(id="json-ld-microdata").string)
+        for k, v in metadata["@graph"][0].items():
+            if k in ("headline", "description"):
+                texts.append(v)
 
-        for p in soup.section.find_all("p"):
-            if p["class"][-1] == "yle__article__paragraph" and not p.em:
+        for p in soup.section.find_all("p", class_="yle__article__paragraph"):
+            if not p.em:
                 texts.append(p.get_text(" ", strip=True))
 
-        script = soup.find_all("script")[-1]
-        obj = json.loads("=".join(script.string.split("=")[1:]))
+        script = soup.body.find("script", type="text/javascript") 
+        obj = json.loads(script.string.split("=", 1)[1])
         lang = obj["pageData"]["article"]["language"]
 
         tokens = tokenize(texts, lang)
