@@ -9,7 +9,7 @@ from tqdm import tqdm
 from util import alpha3convert
 
 
-def main(args):
+def main():
     data_path = Path("data/yle2024")
     ngrams_path = Path("ngrams")
 
