@@ -2,8 +2,7 @@
 
 ## Overview
 
-This repository contains code and data for studying word occurrences in Yle
-news articles published in 2024. The data consist of *n*-gram distribution
+This repository contains code and data for studying word occurrences in news articles published by [Yle – the Finnish Broadcasting Company](https://yle.fi/) in 2024. The data consist of *n*-gram distribution
 frequencies generated from 58,964 articles published by Yle between January 1
 and December 20, 2024.
 
