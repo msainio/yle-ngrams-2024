@@ -11,7 +11,7 @@ There are n-grams for each of the eight languages in which the articles are
 published. The articles are distributed in the following manner:
 
 | Language      | Articles  |
-|---------------|-----------|
+|---------------|----------:|
 | Finnish       | 51,895    |
 | Russian       | 3,039     |
 | English       | 2,500     |
