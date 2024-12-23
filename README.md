@@ -25,16 +25,30 @@ can run the `scripts/decompress.sh` file to decompress them for analysis.
 
 ## Usage
 
-You can use the `get_collocation_finder` and `get_word_fd` functions from
+You can use the `get_word_fd` and `get_collocation_finder` functions from
 `src/collocations.py` to load *n*-gram frequency distributions to memory and
-construct an NLTK `FreqDist`, `BigramCollocationFinder` or
-`TrigramCollocationFinder` object. For general information on how to use these
+construct NLTK `FreqDist`, `BigramCollocationFinder` and
+`TrigramCollocationFinder` objects. For general information on how to use these
 objects, see NLTK example usage for
 [frequency distributions](https://www.nltk.org/howto/probability.html#freqdist)
 and
 [collocation finders](https://www.nltk.org/howto/collocations.html#collocations).
 
 ### Example usage
+
+#### Word frequencies
+
+```python
+>>> from src.collocations import get_word_fd
+>>>
+>>> # Construct frequency distribution from disk
+>>> word_fd = get_word_fd(path="ngrams/eng")
+>>>
+>>> # Top ten most frequent words
+>>> word_fd.most_common(10)
+[('the', 54109), (',', 47397), ('.', 43926), ('to', 26973), ('of', 25880),
+('in', 22559), ('and', 18245), ('a', 17318), ('"', 12134), ('that', 12052)]
+```
 
 #### Collocations
 
@@ -55,18 +69,4 @@ and
 ('swamp', 'soccer'), ('514', '214'), ('cosmic', 'soundscapes'),
 ('furry', 'seafarer'), ('inadequately', 'redacted'),
 ('vitro', 'fertilisation'), ('cerebral', 'thrombosis')]
-```
-
-#### Frequency distributions
-
-```python
->>> from src.collocations import get_word_fd
->>>
->>> # Construct frequency distribution from disk
->>> word_fd = get_word_fd(path="ngrams/eng")
->>>
->>> # Top ten most frequent words
->>> word_fd.most_common(10)
-[('the', 54109), (',', 47397), ('.', 43926), ('to', 26973), ('of', 25880),
-('in', 22559), ('and', 18245), ('a', 17318), ('"', 12134), ('that', 12052)]
 ```
