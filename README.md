@@ -1,13 +1,13 @@
-# Yle n-grams 2024
+# Yle *n*-grams 2024
 
 ## Overview
 
 This repository contains code and data for studying word occurrences in Yle
-news articles published in 2024. The data consist of n-gram distribution
+news articles published in 2024. The data consist of *n*-gram distribution
 frequencies generated from 58,964 articles published by Yle between January 1
 and December 20, 2024.
 
-There are n-grams for eight different languages:
+There are *n*-grams for eight different languages:
 
 | Language      | Num. articles |
 |---------------|--------------:|
@@ -20,14 +20,14 @@ There are n-grams for eight different languages:
 | Inari Sámi    | 46            |
 | Skolt Sámi    | 46            |
 
-The n-gram frequency distributions are serialized in JSON format. Due to the
+The *n*-gram frequency distributions are serialized in JSON format. Due to the
 size of the Finnish data, the Finnish files are supplied in ZIP format. You
 can run the `scripts/decompress.sh` file to decompress them for analysis.
 
 ## Usage
 
 You can use the `get_collocation_finder` and `get_word_fd` functions from
-`src/collocations.py` to load n-gram frequency distributions to memory and
+`src/collocations.py` to load *n*-gram frequency distributions to memory and
 construct an NLTK `FreqDist`, `BigramCollocationFinder` or
 `TrigramCollocationFinder` object. For general information on how to use these
 objects, see NLTK example usage for
@@ -37,9 +37,11 @@ and
 
 ### Example usage
 
+#### Collocations
+
 ```python
 >>> from nltk.metrics import BigramAssocMeasures as bam
->>> from src.collocations import get_collocation_finder, get_word_fd
+>>> from src.collocations import get_collocation_finder
 >>>
 >>> # Construct bigram collocation finder from disk
 >>> finder = get_collocation_finder(path="ngrams/eng", n=2)
@@ -54,6 +56,12 @@ and
 ('swamp', 'soccer'), ('514', '214'), ('cosmic', 'soundscapes'),
 ('furry', 'seafarer'), ('inadequately', 'redacted'),
 ('vitro', 'fertilisation'), ('cerebral', 'thrombosis')]
+```
+
+#### Frequency distributions
+
+```python
+>>> from src.collocations import get_word_fd
 >>>
 >>> # Construct frequency distribution from disk
 >>> word_fd = get_word_fd(path="ngrams/eng")
