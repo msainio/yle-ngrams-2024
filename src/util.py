@@ -1,12 +1,13 @@
-def alpha3convert(alpha2):
-    mapping = {
-        "en": "eng",
-        "fi": "fin",
-        "krl": "krl",
-        "ru": "rus",
-        "se": "sme",
-        "smn": "smn",
-        "sms": "sms",
-        "uk": "ukr"
-        }
-    return mapping[alpha2]
+def ensure_alpha3(code):
+    a2_to_a3 = {
+            "en": "eng",
+            "fi": "fin",
+            "ru": "rus",
+            "se": "sme",
+            "uk": "ukr",
+            }
+
+    if len(code) < 3:
+        return a2_to_a3[code]
+    else:
+        return code

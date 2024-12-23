@@ -1,3 +1,4 @@
 /data/
+/ngrams/fin/*.json
 /venv/
 __pycache__/
