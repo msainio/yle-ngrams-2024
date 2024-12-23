@@ -2,22 +2,18 @@
 
 ## Overview
 
-This repository contains code and data for studying word occurrences in news articles published by [Yle – the Finnish Broadcasting Company](https://yle.fi/) in 2024. The data consist of *n*-gram distribution
-frequencies generated from 58,964 articles published by Yle between January 1
-and December 20, 2024.
+This repository contains code and data for studying word occurrences in news articles published by [Yle – the Finnish Broadcasting Company](https://yle.fi/) in 2024. The data consist of *n*-gram frequency distributions generated from 58,964 articles published between January 1 and December 20, 2024. There are *n*-grams for eight different languages. The number of articles is distributed as follows:
 
-There are *n*-grams for eight different languages:
-
-| Language      | Num. articles |
-|---------------|--------------:|
-| Finnish       | 51,895        |
-| Russian       | 3,039         |
-| English       | 2,500         |
-| Ukrainian     | 1,005         |
-| Northern Sámi | 383           |
-| Karelian      | 60            |
-| Inari Sámi    | 46            |
-| Skolt Sámi    | 46            |
+| Language      | Num. of articles |
+|---------------|-----------------:|
+| Finnish       | 51,895           |
+| Russian       | 3,039            |
+| English       | 2,500            |
+| Ukrainian     | 1,005            |
+| Northern Sámi | 383              |
+| Karelian      | 60               |
+| Inari Sámi    | 46               |
+| Skolt Sámi    | 46               |
 
 The *n*-gram frequency distributions are serialized in JSON format. Due to the
 size of the Finnish data, the Finnish files are supplied in ZIP format. You
