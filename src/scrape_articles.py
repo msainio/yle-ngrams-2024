@@ -17,6 +17,12 @@ def main():
     idx_most_recent = 20132993  # Fri 20 Dec 17:52:50 EET 2024 
     indices = range(idx_first_2024, idx_most_recent + 1)
 
+    scraped = list(output_dir.glob("*.html"))
+    if scraped:
+        idx_last_scraped = int(
+                scraped[-1].parts[-1].split("-")[-1].split(".")[0])
+        indices = range(idx_last_scraped + 1, idx_most_recent)
+
     with requests.Session() as session:
         for idx in tqdm(indices):
             url = url_template.format(idx=idx)
